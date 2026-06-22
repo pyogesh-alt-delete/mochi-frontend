@@ -1,0 +1,114 @@
+<div class="auth-wrap">
+  <div class="auth-left">
+    <div class="dot-grid"></div>
+    <div class="orb"></div>
+
+    <div class="auth-left-logo">
+      <div class="logo-mark">
+        <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="white" opacity=".9"/></svg>
+      </div>
+      <span class="logo-text">mochi</span>
+    </div>
+
+    <div class="card-with-tagline">
+      <div class="card-scene">
+        <div class="float-card">
+          <div class="card-sheen"></div>
+          <div class="card-top">
+            <span class="card-chip">
+              <svg width="38" height="28" viewBox="0 0 38 28" fill="none">
+                <rect width="38" height="28" rx="4" fill="#c8a84b"/>
+                <rect x="1" y="1" width="36" height="26" rx="3" fill="url(#chipGrad)"/>
+                <!-- horizontal lines -->
+                <line x1="0" y1="9.5" x2="38" y2="9.5" stroke="#a07a20" stroke-width="1"/>
+                <line x1="0" y1="18.5" x2="38" y2="18.5" stroke="#a07a20" stroke-width="1"/>
+                <!-- vertical line -->
+                <line x1="19" y1="0" x2="19" y2="28" stroke="#a07a20" stroke-width="1"/>
+                <!-- centre contact cutout -->
+                <rect x="13" y="9.5" width="12" height="9" rx="1.5" fill="#b8922e"/>
+                <defs>
+                  <linearGradient id="chipGrad" x1="0" y1="0" x2="38" y2="28" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#e8c96a"/>
+                    <stop offset="40%" stop-color="#c8a84b"/>
+                    <stop offset="100%" stop-color="#a07a20"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </span>
+            <span class="card-brand">MOCHI</span>
+          </div>
+          <div class="card-num mono">4821 •••• •••• 1199</div>
+          <div class="card-bot">
+            <span class="card-holder">MOCHI USER</span>
+            <span class="card-exp mono">12/28</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-tagline">
+        <h2>Your money,<br>beautifully managed.</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+      <div class="auth-logo-mobile">
+        <div class="logo-mark sm">
+          <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" fill="white" opacity=".9"/></svg>
+        </div>
+        <span class="logo-text">mochi</span>
+      </div>
+
+      <div class="auth-header">
+        <h1>{{ tab() === 'login' ? 'Welcome back' : 'Create account' }}</h1>
+        <p>{{ tab() === 'login' ? 'Sign in to your Mochi account' : 'Start your financial journey' }}</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab" [class.active]="tab() === 'login'" (click)="switchTab('login')">Login</button>
+        <button class="auth-tab" [class.active]="tab() === 'signup'" (click)="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <form (ngSubmit)="submit()" class="auth-form">
+        @if (tab() === 'signup') {
+          <div class="field-group">
+            <label>Full Name</label>
+            <input type="text" [(ngModel)]="name" name="name" placeholder="Arjun Sharma" required>
+          </div>
+        }
+        <div class="field-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="email" name="email" placeholder="demo@mochi.app" required>
+        </div>
+        <div class="field-group">
+          <label>Password</label>
+          <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required>
+        </div>
+
+        @if (error()) {
+          <div class="auth-error">{{ error() }}</div>
+        }
+
+        @if (tab() === 'login') {
+          <div class="auth-hint">Use <span class="mono">demo&#64;mochi.app</span> / <span class="mono">demo1234</span></div>
+        }
+
+        <button type="submit" class="btn-primary submit-btn" [disabled]="loading()">
+          @if (loading()) {
+            <span class="spinner"></span>
+          } @else {
+            {{ tab() === 'login' ? 'Sign In' : 'Create Account' }}
+          }
+        </button>
+      </form>
+
+      <p class="auth-switch">
+        {{ tab() === 'login' ? "Don't have an account?" : 'Already have an account?' }}
+        <button class="link-btn" (click)="switchTab(tab() === 'login' ? 'signup' : 'login')">
+          {{ tab() === 'login' ? 'Sign up' : 'Sign in' }}
+        </button>
+      </p>
+    </div>
+  </div>
+</div>

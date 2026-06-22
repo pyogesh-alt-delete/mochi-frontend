@@ -1,0 +1,228 @@
+<div class="dashboard">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-sub">Good morning — here's your financial overview</p>
+    </div>
+    <div class="header-actions">
+      <span class="date-badge">June 2026</span>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+
+    <!-- Hero Card (col 7) -->
+    <div class="card hero-card">
+      <div class="hero-top">
+        <div>
+          <div class="hero-label">Total Balance</div>
+          <div class="hero-balance mono">{{ fmt(totalBalance()) }}</div>
+          <div class="hero-change pos">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18,15 12,9 6,15"/></svg>
+            12.4% from last month
+          </div>
+        </div>
+        <div class="sparkline-wrap">
+          <svg width="200" height="60" viewBox="0 0 200 60" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity=".3"/>
+                <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path [attr.d]="sparklinePath() + ' L 200 60 L 0 60 Z'" fill="url(#sparkGrad)"/>
+            <path [attr.d]="sparklinePath()" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-label">Income</span>
+          <span class="hero-stat-val mono pos">+{{ fmt(totalIncome()) }}</span>
+        </div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-label">Spent</span>
+          <span class="hero-stat-val mono neg">-{{ fmt(totalExpenses()) }}</span>
+        </div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-label">Saved</span>
+          <span class="hero-stat-val mono pos">{{ fmt(totalIncome() - totalExpenses()) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards (col 5) -->
+    <div class="stats-col">
+      <div class="card stat-card">
+        <div class="stat-icon" style="background: rgba(52,211,153,.12); color: var(--pos)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+        </div>
+        <div>
+          <div class="stat-label">Savings Rate</div>
+          <div class="stat-val mono">{{ savingsRate() }}%</div>
+          <div class="stat-sub pos">On track</div>
+        </div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background: rgba(251,113,133,.12); color: var(--neg)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        </div>
+        <div>
+          <div class="stat-label">Bills Due (7 days)</div>
+          <div class="stat-val mono neg">{{ fmt(billsDue()) }}</div>
+          <div class="stat-sub">{{ data.recurring().length }} subscriptions</div>
+        </div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="background: rgba(129,140,248,.12); color: var(--accent)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div>
+          <div class="stat-label">Active Goals</div>
+          <div class="stat-val mono">{{ data.goals().length }}</div>
+          <div class="stat-sub">₹1.4L contributed</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wallets Carousel (full width) -->
+    <div class="wallets-section full-width">
+      <div class="section-header">
+        <h2>My Wallets</h2>
+        <span class="section-total mono">{{ fmt(totalBalance()) }} total</span>
+      </div>
+      <div class="wallets-scroll">
+        @for (w of data.wallets(); track w.id) {
+          <div class="wallet-card" [style.background]="w.gradient">
+            <div class="wc-sheen"></div>
+            <div class="wc-top">
+              <span class="wc-type">{{ w.type }}</span>
+              <div class="wc-chip">
+                <svg width="22" height="17" viewBox="0 0 28 22"><rect x="1" y="1" width="26" height="20" rx="4" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/><line x1="1" y1="8" x2="27" y2="8" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/><line x1="14" y1="1" x2="14" y2="21" stroke="rgba(255,255,255,.3)" stroke-width="1.5"/></svg>
+              </div>
+            </div>
+            <div class="wc-bal mono" [class.neg]="w.bal < 0">{{ fmt(w.bal) }}</div>
+            <div class="wc-bot">
+              <span class="wc-name">{{ w.name }}</span>
+              <span class="wc-last4 mono">•••• {{ w.last4 }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Spending Donut (col 5) -->
+    <div class="card donut-card">
+      <div class="section-header">
+        <h2>Spending by Category</h2>
+      </div>
+      <div class="donut-wrap">
+        <svg width="160" height="160" viewBox="0 0 160 160">
+          @for (seg of getDashStartPct(); track seg.cat; let i = $index) {
+            <circle
+              cx="80" cy="80" r="60"
+              fill="none"
+              [attr.stroke]="seg.color"
+              stroke-width="22"
+              [attr.stroke-dasharray]="getStrokeDasharray(seg.pct)"
+              [attr.stroke-dashoffset]="getStrokeDashoffset(seg.start)"
+              style="transform-origin: 80px 80px; transition: all .6s"
+            />
+          }
+          <circle cx="80" cy="80" r="49" fill="var(--card)"/>
+        </svg>
+        <div class="donut-center">
+          <div class="donut-total mono">{{ short(donutTotal()) }}</div>
+          <div class="donut-label">total spent</div>
+        </div>
+      </div>
+      <div class="donut-legend">
+        @for (seg of getDashStartPct(); track seg.cat) {
+          <div class="legend-item">
+            <span class="legend-dot" [style.background]="seg.color"></span>
+            <span class="legend-name">{{ seg.cat }}</span>
+            <span class="legend-val mono">{{ short(seg.val) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Income vs Spending Bar Chart (col 7) -->
+    <div class="card bar-chart-card">
+      <div class="section-header">
+        <h2>Income vs Spending</h2>
+        <div class="chart-legend">
+          <span class="cl-item"><span class="cl-dot" style="background:var(--accent)"></span>Income</span>
+          <span class="cl-item"><span class="cl-dot" style="background:var(--neg)"></span>Expenses</span>
+        </div>
+      </div>
+      <div class="bar-chart">
+        @for (m of months; track m; let i = $index) {
+          <div class="bar-col">
+            <div class="bar-pair">
+              <div class="bar income-bar" [style.height.%]="barHeight(incomeData[i])"></div>
+              <div class="bar expense-bar" [style.height.%]="barHeight(expenseData[i])"></div>
+            </div>
+            <div class="bar-label">{{ m }}</div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Recent Activity (col 7) -->
+    <div class="card activity-card">
+      <div class="section-header">
+        <h2>Recent Activity</h2>
+        <a routerLink="/app/transactions" class="view-all">View all</a>
+      </div>
+      <div class="tx-list">
+        @for (tx of recentTransactions(); track tx.id) {
+          <div class="tx-row">
+            <div class="tx-icon" [style.background]="getCatBg(tx.category)" [style.color]="getCatColor(tx.category)">
+              {{ getCatEmoji(tx.category) }}
+            </div>
+            <div class="tx-info">
+              <div class="tx-merchant">{{ tx.merchant }}</div>
+              <div class="tx-meta">
+                <span class="tx-cat-badge" [style.background]="getCatBg(tx.category)" [style.color]="getCatColor(tx.category)">{{ tx.category }}</span>
+                <span class="tx-wallet">{{ tx.wallet }}</span>
+              </div>
+            </div>
+            <div class="tx-amount mono" [class.pos]="tx.amount > 0" [class.neg]="tx.amount < 0">
+              {{ tx.amount > 0 ? '+' : '' }}{{ fmt(tx.amount) }}
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Goals Mini (col 5) -->
+    <div class="card goals-mini-card">
+      <div class="section-header">
+        <h2>Goals</h2>
+        <a routerLink="/app/goals" class="view-all">View all</a>
+      </div>
+      <div class="goals-list">
+        @for (g of topGoals(); track g.id) {
+          <div class="goal-mini">
+            <div class="gm-header">
+              <div class="gm-dot" [style.background]="g.color"></div>
+              <span class="gm-name">{{ g.name }}</span>
+              <span class="gm-pct mono">{{ getGoalPct(g) }}%</span>
+            </div>
+            <div class="gm-bar">
+              <div class="gm-fill" [style.width.%]="getGoalPct(g)" [style.background]="g.color"></div>
+            </div>
+            <div class="gm-amounts">
+              <span class="mono dim">{{ short(g.current) }}</span>
+              <span class="mono faint">of {{ short(g.target) }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

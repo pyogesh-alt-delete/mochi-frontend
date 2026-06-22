@@ -1,0 +1,155 @@
+<div class="shell" [attr.data-theme]="theme.theme()">
+
+  <!-- Sidebar (Desktop) -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="white" opacity=".9"/></svg>
+      </div>
+      <span class="logo-text">mochi</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of navItems(); track item.path) {
+        <a [routerLink]="item.path" class="nav-item" [class.active]="isActive(item.path)">
+          <span class="nav-icon" [innerHTML]="getIcon(item.icon)"></span>
+          <span class="nav-label">{{ item.label }}</span>
+          @if (item.badge) {
+            <span class="nav-badge" [class.soon]="item.badge === 'Soon'">{{ item.badge }}</span>
+          }
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="theme-toggle" (click)="theme.toggleTheme()">
+        @if (theme.theme() === 'dark') {
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          Light Mode
+        } @else {
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Dark Mode
+        }
+      </button>
+      <div class="user-card">
+        <div class="user-avatar">{{ getInitials() }}</div>
+        <div class="user-info">
+          <div class="user-name">{{ getUser()?.name || 'Demo User' }}</div>
+          <div class="user-email">{{ getUser()?.email || 'demo@mochi.app' }}</div>
+        </div>
+        <button class="logout-btn" (click)="logout()" title="Logout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-area">
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+      <div class="logo-mark sm">
+        <svg width="14" height="14" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="white" opacity=".9"/></svg>
+      </div>
+      <span class="logo-text">{{ pageTitle() }}</span>
+      <button class="theme-toggle-sm" (click)="theme.toggleTheme()">
+        @if (theme.theme() === 'dark') {
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        } @else {
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        }
+      </button>
+    </header>
+
+    <!-- Content -->
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="bottom-nav">
+    @for (item of mobileNavItems; track item.path) {
+      <a [routerLink]="item.path" class="bottom-nav-item" [class.active]="isActive(item.path)">
+        <span class="bn-icon" [innerHTML]="getIcon(item.icon)"></span>
+        <span class="bn-label">{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <!-- FAB -->
+  <button class="fab" (click)="openAdd()">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+
+  <!-- Transaction Modal -->
+  @if (showModal()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ editingTx() ? 'Edit Transaction' : 'Add Transaction' }}</h3>
+          <button class="modal-close" (click)="closeModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div class="modal-type-tabs">
+          <button [class.active]="modalType() === 'expense'" (click)="modalType.set('expense')">Expense</button>
+          <button [class.active]="modalType() === 'income'" (click)="modalType.set('income')">Income</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="modal-field">
+            <label>Description</label>
+            <input type="text" [ngModel]="modalDesc()" (ngModelChange)="modalDesc.set($event)" placeholder="e.g. Swiggy, Salary...">
+          </div>
+
+          <div class="modal-field">
+            <label>Amount</label>
+            <div class="amount-input">
+              <span class="currency-prefix">&#8377;</span>
+              <input type="number" [ngModel]="modalAmount()" (ngModelChange)="modalAmount.set($event)" placeholder="0">
+            </div>
+          </div>
+
+          <div class="modal-field">
+            <label>Category</label>
+            <div class="chip-grid">
+              @for (cat of categories; track cat) {
+                <button class="chip" [class.active]="modalCategory() === cat" (click)="modalCategory.set(cat)">{{ cat }}</button>
+              }
+            </div>
+          </div>
+
+          <div class="modal-field">
+            <label>Wallet</label>
+            <div class="chip-grid">
+              @for (w of data.wallets(); track w.id) {
+                <button class="chip" [class.active]="modalWallet() === w.name" (click)="modalWallet.set(w.name)">{{ w.name }}</button>
+              }
+            </div>
+          </div>
+
+          <div class="modal-field">
+            <label>Date</label>
+            <div class="chip-grid">
+              @for (g of groups; track g) {
+                <button class="chip" [class.active]="modalGroup() === g" (click)="modalGroup.set(g)">{{ g }}</button>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          @if (editingTx()) {
+            <button class="btn-danger" (click)="deleteTx()">Delete</button>
+          }
+          <button class="btn-ghost" (click)="closeModal()">Cancel</button>
+          <button class="btn-primary" (click)="saveModal()">
+            {{ editingTx() ? 'Save Changes' : 'Add Transaction' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

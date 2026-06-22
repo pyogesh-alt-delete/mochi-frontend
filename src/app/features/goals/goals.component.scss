@@ -1,0 +1,263 @@
+.goals-page { animation: rise .4s ease-out; }
+
+.page-header {
+  display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;
+}
+.page-title { font-size: 1.75rem; font-weight: 800; color: var(--fg); letter-spacing: -.03em; margin-bottom: 4px; }
+.page-sub { color: var(--dim); font-size: .875rem; }
+
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); padding: 24px;
+}
+
+.summary-banner {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 24px;
+  padding: 20px 28px;
+}
+
+.sb-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+.sb-label { font-size: .72rem; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: .05em; }
+.sb-val { font-size: 1.3rem; font-weight: 700; color: var(--fg); }
+.sb-sep { width: 1px; background: var(--border); height: 40px; }
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.goal-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 24px 20px;
+  transition: transform .2s;
+
+  &:hover { transform: translateY(-2px); }
+}
+
+.goal-ring-wrap {
+  margin-bottom: 16px;
+}
+
+.goal-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.goal-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.goal-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin: 0;
+}
+
+.goal-amounts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .95rem;
+}
+.ga-current { font-weight: 700; }
+.ga-sep { color: var(--faint); }
+.ga-target { color: var(--dim); font-weight: 600; }
+
+.goal-meta {
+  display: flex;
+  gap: 20px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+  justify-content: center;
+}
+
+.gm-item { display: flex; flex-direction: column; gap: 2px; text-align: center; }
+.gm-label { font-size: .68rem; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: .04em; }
+.gm-val { font-size: .88rem; font-weight: 700; color: var(--fg); }
+
+.goal-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--muted);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.goal-fill {
+  height: 100%;
+  border-radius: 3px;
+  animation: growx .8s ease-out;
+  transform-origin: left;
+  transition: width .8s ease;
+}
+
+.goal-remaining { font-size: .78rem; .faint { color: var(--faint); } }
+
+/* Add Card */
+.add-goal-card {
+  border: 2px dashed var(--border);
+  border-radius: 18px;
+  background: transparent;
+  color: var(--faint);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: .9rem;
+  font-weight: 600;
+  font-family: inherit;
+  min-height: 200px;
+  transition: all .2s;
+
+  &:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accentSoft);
+  }
+}
+
+.add-plus {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+
+  .add-goal-card:hover & { background: var(--accentSoft); }
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.7);
+  backdrop-filter: blur(8px); z-index: 500;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  animation: pop .15s ease-out;
+}
+
+.modal {
+  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+  width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+  box-shadow: var(--shadow), 0 40px 80px rgba(0,0,0,.5);
+  animation: pop .2s ease-out;
+}
+
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+
+  h3 { font-size: 1.1rem; font-weight: 700; color: var(--fg); }
+}
+
+.modal-close {
+  background: none; border: none; color: var(--dim); cursor: pointer; padding: 6px; border-radius: 8px; display: flex;
+  &:hover { color: var(--fg); }
+}
+
+.modal-body {
+  padding: 20px 24px; display: flex; flex-direction: column; gap: 16px;
+}
+
+.field-row { display: flex; gap: 14px; }
+
+.field-group {
+  flex: 1;
+  label { display: block; font-size: .75rem; font-weight: 700; color: var(--faint); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+  input { width: 100%; padding: 10px 14px; background: var(--field); border: 1px solid var(--border); border-radius: 10px; color: var(--fg); font-size: .9rem; font-family: inherit; outline: none; transition: all .2s; box-sizing: border-box;
+    &:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accentSoft); }
+  }
+}
+
+.color-picker { display: flex; gap: 10px; }
+.color-dot {
+  width: 32px; height: 32px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: all .2s;
+  &.active { border-color: var(--fg); transform: scale(1.15); }
+}
+
+.modal-footer {
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  padding: 16px 24px 20px; border-top: 1px solid var(--border);
+}
+
+.btn-ghost {
+  padding: 10px 16px; border: none; background: var(--muted); color: var(--dim);
+  border-radius: 10px; font-size: .875rem; font-weight: 600; cursor: pointer; font-family: inherit;
+  &:hover { color: var(--fg); }
+}
+
+.btn-primary {
+  padding: 10px 20px; border: none; background: var(--accent); color: white;
+  border-radius: 10px; font-size: .875rem; font-weight: 700; cursor: pointer; font-family: inherit;
+  &:hover { background: var(--accent2); }
+}
+
+.goal-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  opacity: 0;
+  transition: opacity .2s;
+
+  .goal-card:hover & { opacity: 1; }
+}
+
+.btn-icon {
+  width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--muted); color: var(--dim); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all .15s;
+
+  &:hover { background: var(--card); color: var(--fg); border-color: var(--accent); }
+  &.danger:hover { background: rgba(251,113,133,.12); color: var(--neg); border-color: var(--neg); }
+}
+
+/* Confirm dialog */
+.confirm-dialog {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 28px 28px 24px; max-width: 360px; width: 100%;
+  box-shadow: var(--shadow), 0 40px 80px rgba(0,0,0,.5);
+  animation: pop .2s ease-out;
+  text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+
+.confirm-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: rgba(251,113,133,.12); color: var(--neg);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 4px;
+}
+
+.confirm-dialog h3 { font-size: 1.05rem; font-weight: 700; color: var(--fg); margin: 0; }
+.confirm-dialog p { font-size: .85rem; color: var(--faint); margin: 0; }
+
+.confirm-actions { display: flex; gap: 10px; margin-top: 8px; }
+
+.btn-danger {
+  padding: 10px 20px; border: none; background: var(--neg); color: white;
+  border-radius: 10px; font-size: .875rem; font-weight: 700; cursor: pointer; font-family: inherit;
+  &:hover { opacity: .85; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+.mono { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.pos { color: var(--pos); }
+.faint { color: var(--faint); }

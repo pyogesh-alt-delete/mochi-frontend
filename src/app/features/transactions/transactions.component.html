@@ -1,0 +1,76 @@
+<div class="transactions-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Transactions</h1>
+      <p class="page-sub">All your financial activity</p>
+    </div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-pill pos">
+      <span class="sp-label">Money In</span>
+      <span class="sp-val mono">+{{ fmt(totalIn()) }}</span>
+    </div>
+    <div class="stat-pill neg">
+      <span class="sp-label">Money Out</span>
+      <span class="sp-val mono">-{{ fmt(totalOut()) }}</span>
+    </div>
+    <div class="stat-pill">
+      <span class="sp-label">Total</span>
+      <span class="sp-val mono">{{ data.transactions().length }} transactions</span>
+    </div>
+  </div>
+
+  <!-- Search + Filter -->
+  <div class="controls">
+    <div class="search-wrap">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Search transactions..." class="search-input">
+    </div>
+    <div class="cat-chips">
+      @for (cat of categories; track cat) {
+        <button class="cat-chip" [class.active]="activeCategory() === cat" (click)="activeCategory.set(cat)">{{ cat }}</button>
+      }
+    </div>
+  </div>
+
+  <!-- Grouped Transactions -->
+  @for (group of groupedTransactions(); track group.group) {
+    <div class="tx-group">
+      <div class="group-label">{{ group.group }}</div>
+      <div class="card tx-card">
+        @for (tx of group.txs; track tx.id; let last = $last) {
+          <div class="tx-row" [class.last]="last">
+            <div class="tx-icon" [style.background]="getCatBg(tx.category)" [style.color]="getCatColor(tx.category)">
+              {{ getCatEmoji(tx.category) }}
+            </div>
+            <div class="tx-info">
+              <div class="tx-merchant">{{ tx.merchant }}</div>
+              <div class="tx-meta">
+                <span class="cat-badge" [style.background]="getCatBg(tx.category)" [style.color]="getCatColor(tx.category)">{{ tx.category }}</span>
+                <span class="tx-wallet-name">{{ tx.wallet }}</span>
+              </div>
+            </div>
+            <div class="tx-right">
+              <div class="tx-amount mono" [class.pos]="tx.amount > 0" [class.neg]="tx.amount < 0">
+                {{ tx.amount > 0 ? '+' : '' }}{{ fmt(tx.amount) }}
+              </div>
+              <button class="del-btn" (click)="delete(tx.id, $event)" title="Delete">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2v2"/></svg>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  @if (groupedTransactions().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>No transactions found</h3>
+      <p>Try adjusting your search or filters</p>
+    </div>
+  }
+</div>

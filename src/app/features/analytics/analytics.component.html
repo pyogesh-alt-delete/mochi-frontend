@@ -1,0 +1,154 @@
+<div class="analytics-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Analytics</h1>
+      <p class="page-sub">Deep insights into your finances</p>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-grid">
+    <div class="card stat-card">
+      <div class="sc-icon" style="background:rgba(129,140,248,.12);color:var(--accent)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>
+      </div>
+      <div class="sc-label">Net Worth</div>
+      <div class="sc-val mono" [class.neg]="netWorth() < 0">{{ short(netWorth()) }}</div>
+      <div class="sc-change" [class.pos]="thisMonthNet() >= 0" [class.neg]="thisMonthNet() < 0">
+        {{ thisMonthNet() >= 0 ? '+' : '' }}{{ short(thisMonthNet()) }} this month
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="sc-icon" style="background:rgba(251,191,36,.12);color:#fbbf24">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </div>
+      <div class="sc-label">Avg. Daily Spend</div>
+      <div class="sc-val mono">{{ fmt(avgDailySpend()) }}</div>
+      <div class="sc-change">last 14 days</div>
+    </div>
+    <div class="card stat-card">
+      <div class="sc-icon" style="background:rgba(192,132,252,.12);color:var(--c5)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+      </div>
+      <div class="sc-label">Biggest Category</div>
+      <div class="sc-val">{{ biggestCategory().cat }}</div>
+      <div class="sc-change neg">{{ short(biggestCategory().val) }} spent</div>
+    </div>
+    <div class="card stat-card">
+      <div class="sc-icon" style="background:rgba(45,212,191,.12);color:var(--c2)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </div>
+      <div class="sc-label">Subscriptions</div>
+      <div class="sc-val mono">{{ fmt(subscriptionTotal()) }}</div>
+      <div class="sc-change">{{ data.recurring().length }} active</div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <!-- Net Cashflow (full width) -->
+    <div class="card chart-card full">
+      <div class="chart-header">
+        <h2>Net Cashflow</h2>
+        <span class="chart-sub">6-month trend</span>
+      </div>
+      @if (data.transactions().length === 0) {
+        <div class="empty-chart">No transactions yet</div>
+      } @else {
+        <div class="cashflow-chart">
+          @for (m of monthlyCashflow(); track m.label) {
+            <div class="cf-col">
+              <div class="cf-val mono" [class.neg]="m.net < 0" [class.pos]="m.net > 0">
+                {{ m.net !== 0 ? short(m.net) : '—' }}
+              </div>
+              <div class="cf-bar-wrap">
+                <div class="cf-bar"
+                  [style.height.%]="barH(m.net, maxMonthly())"
+                  [class.cf-bar-neg]="m.net < 0"
+                  [class.cf-bar-zero]="m.net === 0">
+                </div>
+              </div>
+              <div class="cf-label">{{ m.label }}</div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Top Sources -->
+    <div class="card chart-card">
+      <div class="chart-header">
+        <h2>Top Sources</h2>
+        <span class="chart-sub">by volume</span>
+      </div>
+      @if (topSources().length === 0) {
+        <div class="empty-chart">No transactions yet</div>
+      } @else {
+        <div class="merchants-list">
+          @for (s of topSources(); track s.name) {
+            <div class="merchant-row">
+              <div class="merchant-info">
+                <span class="merchant-name">{{ s.name }}</span>
+                <span class="merchant-cat" [style.color]="getCatColor(s.cat)">{{ s.cat }}</span>
+              </div>
+              <div class="merchant-bar-wrap">
+                <div class="merchant-bar" [style.width.%]="getSourceWidth(s.amount)" [style.background]="getCatColor(s.cat)"></div>
+              </div>
+              <span class="merchant-amt mono">{{ short(s.amount) }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Daily Spending -->
+    <div class="card chart-card">
+      <div class="chart-header">
+        <h2>Daily Spending</h2>
+        <span class="chart-sub">Last 14 days</span>
+      </div>
+      @if (data.transactions().length === 0) {
+        <div class="empty-chart">No transactions yet</div>
+      } @else {
+        <div class="daily-chart">
+          @for (d of dailySpendData(); track $index) {
+            <div class="daily-col">
+              <div class="daily-bar-wrap">
+                <div class="daily-bar" [style.height.%]="barH(d.spent, maxDailySpend())" [class.daily-bar-active]="d.spent > 0"></div>
+              </div>
+              <div class="daily-label">{{ d.label }}</div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Category Breakdown (full width) -->
+    <div class="card chart-card full">
+      <div class="chart-header">
+        <h2>Spending by Category</h2>
+        <span class="chart-sub">All time</span>
+      </div>
+      @if (categoryBreakdown().length === 0) {
+        <div class="empty-chart">No spending data yet</div>
+      } @else {
+        <div class="cat-breakdown">
+          @for (c of categoryBreakdown(); track c.cat) {
+            <div class="cat-row">
+              <div class="cat-left">
+                <div class="cat-dot" [style.background]="getCatColor(c.cat)"></div>
+                <span class="cat-name">{{ c.cat }}</span>
+              </div>
+              <div class="cat-bar-wrap">
+                <div class="cat-bar" [style.width.%]="c.pct" [style.background]="getCatColor(c.cat)"></div>
+              </div>
+              <div class="cat-right">
+                <span class="cat-pct mono">{{ c.pct }}%</span>
+                <span class="cat-amt mono dim">{{ short(c.val) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,405 @@
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-40px, 60px) scale(1.05); }
+  66%       { transform: translate(30px, -30px) scale(.97); }
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%       { transform: translateY(-14px) rotate(1deg); }
+}
+
+@keyframes sheen {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  50%  { transform: translateX(200%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+// ── Wrap ──────────────────────────────────────────────────────────────────────
+
+.onboard-wrap {
+  min-height: 100vh;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ── Dot grid ─────────────────────────────────────────────────────────────────
+
+.dot-grid {
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: .4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+// ── Orb ───────────────────────────────────────────────────────────────────────
+
+.orb {
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, .25), transparent 70%);
+  filter: blur(100px);
+  top: -150px;
+  right: -150px;
+  animation: drift 25s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+// ── Container ─────────────────────────────────────────────────────────────────
+
+.onboard-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 900px;
+  padding: 40px;
+
+  @media (max-width: 700px) {
+    padding: 24px;
+  }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+
+.onboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+
+.logo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent2, #4338ca);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--fg);
+  letter-spacing: -0.03em;
+}
+
+.step-badge {
+  background: var(--accentSoft);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+
+// ── Body grid ─────────────────────────────────────────────────────────────────
+
+.onboard-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+// ── Left column ───────────────────────────────────────────────────────────────
+
+.onboard-left {
+  h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--fg);
+    margin: 0 0 8px;
+  }
+}
+
+.subtitle {
+  color: var(--dim);
+  margin: 0 0 32px;
+  font-size: .95rem;
+}
+
+// ── Field group ───────────────────────────────────────────────────────────────
+
+.field-group {
+  margin-bottom: 24px;
+
+  label {
+    display: block;
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--faint);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--field);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--fg);
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: all .2s;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: var(--faint);
+    }
+
+    &:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accentSoft);
+    }
+
+    // Remove number spinners
+    &[type='number']::-webkit-inner-spin-button,
+    &[type='number']::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+    &[type='number'] { -moz-appearance: textfield; }
+  }
+}
+
+// ── Type grid ─────────────────────────────────────────────────────────────────
+
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.type-btn {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--dim);
+  cursor: pointer;
+  font-size: .85rem;
+  font-weight: 500;
+  transition: all .2s;
+  font-family: inherit;
+  text-align: center;
+
+  &:hover {
+    border-color: var(--accent);
+    color: var(--fg);
+  }
+
+  &.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accentSoft);
+    font-weight: 600;
+  }
+}
+
+// ── Gradient picker ───────────────────────────────────────────────────────────
+
+.gradient-picker {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.grad-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all .2s;
+  outline: none;
+  flex-shrink: 0;
+
+  &:hover {
+    transform: scale(1.08);
+  }
+
+  &.active {
+    border-color: var(--fg);
+    transform: scale(1.12);
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--fg);
+  }
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+
+.onboard-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.btn-primary {
+  padding: 14px 24px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: .95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+  text-align: center;
+
+  &:hover {
+    background: var(--accent2);
+  }
+}
+
+.btn-ghost {
+  padding: 14px 24px;
+  background: transparent;
+  color: var(--dim);
+  border: none;
+  border-radius: 12px;
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+  text-align: center;
+
+  &:hover {
+    color: var(--fg);
+  }
+}
+
+// ── Right column (card preview) ───────────────────────────────────────────────
+
+.onboard-right {
+  position: sticky;
+  top: 40px;
+}
+
+.preview-label {
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--faint);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 16px;
+}
+
+.preview-card {
+  width: 100%;
+  max-width: 360px;
+  height: 210px;
+  border-radius: 22px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  color: white;
+  animation: floaty 6s ease-in-out infinite;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, .4);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, .1) 50%,
+    transparent 60%
+  );
+  animation: sheen 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.card-type-label {
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  opacity: .7;
+}
+
+.card-balance {
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  position: relative;
+  z-index: 1;
+  margin-top: 20px;
+}
+
+.card-bot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: relative;
+  z-index: 1;
+}
+
+.card-name-label {
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  opacity: .8;
+}
+
+.card-brand {
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  opacity: .6;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.card-chip {
+  display: flex;
+  align-items: center;
+}
+
+// ── Mono utility ──────────────────────────────────────────────────────────────
+
+.mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}

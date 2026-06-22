@@ -1,0 +1,66 @@
+<div class="budgets-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Budgets</h1>
+      <p class="page-sub">Track your spending limits</p>
+    </div>
+  </div>
+
+  <!-- Summary Card -->
+  <div class="card summary-card">
+    <div class="summary-top">
+      <div>
+        <div class="summary-label">Total Budget Used</div>
+        <div class="summary-val mono" [class.over]="overallPct() >= 100">{{ fmt(totalSpent()) }}</div>
+        <div class="summary-sub">of {{ fmt(totalLimit()) }} total budget</div>
+      </div>
+      <div class="summary-pct mono" [class.over]="overallPct() >= 100">{{ overallPct() }}%</div>
+    </div>
+    <div class="summary-bar">
+      <div class="summary-fill" [style.width.%]="overallPct()" [class.over]="overallPct() >= 100"></div>
+    </div>
+    <div class="summary-cats">
+      @for (b of data.budgets(); track b.category) {
+        <div class="sum-cat" [style.color]="getCatColor(b.category)" [title]="b.category">
+          <span>{{ getCatEmoji(b.category) }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Budget Cards Grid -->
+  <div class="budgets-grid">
+    @for (b of data.budgets(); track b.category) {
+      <div class="card budget-card" [class.over-budget]="isOver(b)">
+        <div class="bc-header">
+          <div class="bc-icon" [style.background]="getCatBg(b.category)">
+            <span>{{ getCatEmoji(b.category) }}</span>
+          </div>
+          <div class="bc-title">
+            <div class="bc-cat">{{ b.category }}</div>
+            @if (isOver(b)) {
+              <div class="bc-over-badge">{{ Math.round(((b.spent - b.limit) / b.limit) * 100) }}% over</div>
+            }
+          </div>
+          <div class="bc-pct mono" [class.over]="isOver(b)">{{ pct(b) }}%</div>
+        </div>
+        <div class="bc-bar">
+          <div class="bc-fill" [style.width.%]="pct(b)" [style.background]="isOver(b) ? 'var(--neg)' : getCatColor(b.category)"></div>
+        </div>
+        <div class="bc-amounts">
+          <span class="mono dim">{{ fmt(b.spent) }} spent</span>
+          <span class="mono faint">{{ fmt(b.limit) }} limit</span>
+        </div>
+        @if (!isOver(b)) {
+          <div class="bc-remaining">
+            <span class="mono pos">{{ fmt(b.limit - b.spent) }} remaining</span>
+          </div>
+        } @else {
+          <div class="bc-remaining">
+            <span class="mono neg">{{ fmt(b.spent - b.limit) }} over budget</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

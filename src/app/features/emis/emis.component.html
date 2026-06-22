@@ -1,0 +1,249 @@
+<div class="emis-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">EMIs & Loans</h1>
+      <p class="page-sub">Track your loan repayments</p>
+    </div>
+    <button class="btn-add" (click)="showAdd.set(true)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add EMI
+    </button>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-row">
+    <div class="card stat-card">
+      <div class="sc-icon" style="background:rgba(251,113,133,.12);color:var(--neg)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      </div>
+      <div>
+        <div class="sc-label">Total Monthly EMI</div>
+        <div class="sc-val mono neg">{{ fmt(totalEmi()) }}</div>
+        <div class="sc-sub">per month</div>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="sc-icon" style="background:rgba(251,191,36,.12);color:#fbbf24">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div>
+        <div class="sc-label">Total Outstanding</div>
+        <div class="sc-val mono">{{ short(totalOutstanding()) }}</div>
+        <div class="sc-sub">remaining principal</div>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="sc-icon" style="background:rgba(129,140,248,.12);color:var(--accent)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      </div>
+      <div>
+        <div class="sc-label">Active Loans</div>
+        <div class="sc-val mono">{{ data.emis().length }}</div>
+        <div class="sc-sub">loans tracked</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMI Cards -->
+  <div class="emis-list">
+    @for (e of data.emis(); track e.id) {
+      <div class="card emi-card">
+        <div class="ec-header">
+          <div class="ec-left">
+            <div class="ec-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            </div>
+            <div>
+              <div class="ec-name">{{ e.name }}</div>
+              <div class="ec-bank">{{ e.bank }}</div>
+            </div>
+          </div>
+          <div class="ec-right">
+            <div class="ec-emi mono">{{ fmt(e.emi) }}<span class="ec-mo">/mo</span></div>
+            <div class="ec-due">Due {{ e.due }}</div>
+            <div class="ec-actions">
+              <button class="btn-icon" (click)="openEdit(e)" title="Edit">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-icon danger" (click)="deleteId.set(e.id)" title="Delete">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ec-progress-wrap">
+          <div class="ec-progress">
+            <div class="ec-fill" [style.width.%]="paidPct(e)"></div>
+          </div>
+          <div class="ec-progress-labels">
+            <span class="mono dim">{{ e.paid }} paid</span>
+            <span class="mono faint">{{ e.total - e.paid }} remaining</span>
+          </div>
+        </div>
+
+        <div class="ec-meta">
+          <div class="ec-meta-item">
+            <span class="ec-meta-label">Outstanding</span>
+            <span class="ec-meta-val mono">{{ short(e.outstanding) }}</span>
+          </div>
+          <div class="ec-meta-item">
+            <span class="ec-meta-label">Interest Rate</span>
+            <span class="ec-meta-val mono" [class.pos]="e.rate === 0">{{ e.rate === 0 ? 'No Cost' : e.rate + '% p.a.' }}</span>
+          </div>
+          <div class="ec-meta-item">
+            <span class="ec-meta-label">Progress</span>
+            <span class="ec-meta-val mono">{{ paidPct(e) }}%</span>
+          </div>
+          <div class="ec-meta-item">
+            <span class="ec-meta-label">Tenure</span>
+            <span class="ec-meta-val mono">{{ e.paid }}/{{ e.total }} EMIs</span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Add EMI Modal -->
+  @if (showAdd()) {
+    <div class="modal-backdrop" (click)="showAdd.set(false)">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+          <h3>Add EMI / Loan</h3>
+          <button class="modal-close" (click)="showAdd.set(false)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="field-row">
+            <div class="field-group">
+              <label>Loan Name</label>
+              <input [ngModel]="newName()" (ngModelChange)="newName.set($event)" placeholder="e.g. Home Loan">
+            </div>
+            <div class="field-group">
+              <label>Bank / Lender</label>
+              <input [ngModel]="newBank()" (ngModelChange)="newBank.set($event)" placeholder="e.g. HDFC Bank">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label>EMI Amount (₹)</label>
+              <input type="number" [ngModel]="newEmiAmount()" (ngModelChange)="newEmiAmount.set(+$event)" placeholder="15000">
+            </div>
+            <div class="field-group">
+              <label>Outstanding (₹)</label>
+              <input type="number" [ngModel]="newOutstanding()" (ngModelChange)="newOutstanding.set(+$event)" placeholder="500000">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label>Total Installments</label>
+              <input type="number" [ngModel]="newTotal()" (ngModelChange)="newTotal.set(+$event)" placeholder="60">
+            </div>
+            <div class="field-group">
+              <label>Paid Installments</label>
+              <input type="number" [ngModel]="newPaid()" (ngModelChange)="newPaid.set(+$event)" placeholder="0">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label>Interest Rate (%)</label>
+              <input type="number" [ngModel]="newRate()" (ngModelChange)="newRate.set(+$event)" placeholder="8.5">
+            </div>
+            <div class="field-group">
+              <label>Due Date</label>
+              <input [ngModel]="newDueDate()" (ngModelChange)="newDueDate.set($event)" placeholder="e.g. 5th, 10th">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-ghost" (click)="showAdd.set(false)">Cancel</button>
+          <button class="btn-primary" (click)="addEmi()" [disabled]="saving()">
+            {{ saving() ? 'Adding...' : 'Add Loan' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Edit EMI Modal -->
+  @if (editEmi()) {
+    <div class="modal-backdrop" (click)="editEmi.set(null)">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+          <h3>Edit EMI / Loan</h3>
+          <button class="modal-close" (click)="editEmi.set(null)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="field-row">
+            <div class="field-group">
+              <label>Loan Name</label>
+              <input [ngModel]="editName()" (ngModelChange)="editName.set($event)">
+            </div>
+            <div class="field-group">
+              <label>Bank / Lender</label>
+              <input [ngModel]="editBank()" (ngModelChange)="editBank.set($event)">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label>EMI Amount (₹)</label>
+              <input type="number" [ngModel]="editEmiAmount()" (ngModelChange)="editEmiAmount.set(+$event)">
+            </div>
+            <div class="field-group">
+              <label>Outstanding (₹)</label>
+              <input type="number" [ngModel]="editOutstanding()" (ngModelChange)="editOutstanding.set(+$event)">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label>Total Installments</label>
+              <input type="number" [ngModel]="editTotal()" (ngModelChange)="editTotal.set(+$event)">
+            </div>
+            <div class="field-group">
+              <label>Paid Installments</label>
+              <input type="number" [ngModel]="editPaid()" (ngModelChange)="editPaid.set(+$event)">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label>Interest Rate (%)</label>
+              <input type="number" [ngModel]="editRate()" (ngModelChange)="editRate.set(+$event)">
+            </div>
+            <div class="field-group">
+              <label>Due Date</label>
+              <input [ngModel]="editDueDate()" (ngModelChange)="editDueDate.set($event)">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-ghost" (click)="editEmi.set(null)">Cancel</button>
+          <button class="btn-primary" (click)="saveEdit()" [disabled]="saving()">
+            {{ saving() ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Delete Confirmation -->
+  @if (deleteId()) {
+    <div class="modal-backdrop" (click)="deleteId.set(null)">
+      <div class="confirm-dialog" (click)="$event.stopPropagation()">
+        <div class="confirm-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </div>
+        <h3>Delete Loan?</h3>
+        <p>This action cannot be undone.</p>
+        <div class="confirm-actions">
+          <button class="btn-ghost" (click)="deleteId.set(null)">Cancel</button>
+          <button class="btn-danger" (click)="doDelete()" [disabled]="deleting()">
+            {{ deleting() ? 'Deleting...' : 'Delete' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
